@@ -1,0 +1,99 @@
+{
+  "personalInfo": {
+    "name": "Jawahar Vignesh",
+    "title": "Senior Software Engineer",
+    "branding": "Software Architecture • Full Stack Development • System Design",
+    "email": "example@email.com",
+    "phone": "123-456-7890",
+    "linkedin": "https://www.linkedin.com/in/jawahar-vignesh-36418022/",
+    "github": "https://github.com/jawacompu10",
+    "website": "https://example.com"
+  },
+  "summary": "Experienced Software Engineer with a strong background in developing scalable web applications and distributed systems. Proven track record of leading technical teams and delivering high-quality software solutions across various industries.",
+  "keyAchievements": [
+    "Developed and maintained large-scale web applications using modern frameworks.",
+    "Led a team of engineers to successfully deliver a high-impact project ahead of schedule.",
+    "Optimized system performance, resulting in a significant reduction in latency.",
+    "Implemented automated testing and CI/CD pipelines to improve development efficiency.",
+    "Collaborated with cross-functional teams to define product requirements and technical specifications."
+  ],
+  "projectHighlights": [
+    "Built a real-time data processing engine using cloud-native technologies.",
+    "Developed a highly customizable UI component library used across multiple projects.",
+    "Implemented a secure and scalable authentication system for a global platform.",
+    "Designed and deployed a microservices-based architecture for a complex business application."
+  ],
+  "experience": [
+    {
+      "title": "Senior Software Engineer",
+      "company": "Tech Solutions Inc., City, Country",
+      "years": "Jan 2022 - Present",
+      "description": [
+        "Lead the development of core platform features using TypeScript and React.",
+        "Architected a scalable backend system using Node.js and PostgreSQL.",
+        "Mentor junior developers and conduct regular code reviews to ensure code quality.",
+        "Drive the adoption of best practices in software development and DevOps."
+      ]
+    },
+    {
+      "title": "Software Engineer",
+      "company": "Innovative Labs, City, Country",
+      "years": "Mar 2019 - Dec 2021",
+      "description": [
+        "Developed and maintained various web applications using Python and Django.",
+        "Collaborated with UX designers to implement responsive and intuitive user interfaces.",
+        "Integrated third-party APIs and services to enhance application functionality.",
+        "Participated in agile development processes, including sprint planning and retrospectives."
+      ]
+    },
+    {
+      "title": "Junior Developer",
+      "company": "StartUp Hub, City, Country",
+      "years": "Jun 2016 - Feb 2019",
+      "description": [
+        "Assisted in the development of front-end components using HTML, CSS, and JavaScript.",
+        "Fixed bugs and implemented feature requests for existing client projects.",
+        "Learned and applied modern software development methodologies and tools.",
+        "Contributed to documentation and internal knowledge sharing."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "university": "State University, City, Country",
+      "years": "2016"
+    },
+    {
+      "degree": "Bachelor of Science in Information Technology",
+      "university": "Local Institute of Technology, City, Country",
+      "years": "2014"
+    }
+  ],
+  "skills": {
+    "Programming Languages": [
+      "JavaScript (ES6+)",
+      "TypeScript",
+      "Python",
+      "Java",
+      "SQL",
+      "HTML5 & CSS3"
+    ],
+    "Frameworks & Libraries": [
+      "React",
+      "Node.js",
+      "Express",
+      "Django",
+      "Tailwind CSS",
+      "Jest"
+    ],
+    "Tools & Platforms": [
+      "Git & GitHub",
+      "Docker",
+      "AWS",
+      "CI/CD (GitHub Actions)",
+      "PostgreSQL",
+      "Redis"
+    ]
+  }
+}
