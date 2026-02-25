@@ -2,6 +2,9 @@
 
 A clean, responsive, and data-driven resume template that populates content from a JSON file. This project is designed for easy customization and professional printing.
 
+<img width="928" height="1045" alt="image" src="https://github.com/user-attachments/assets/663fa540-3acf-4a01-b6fb-6e4af42a2dc6" />
+
+
 ## Features
 - **JSON Driven:** Update your resume content in one place (`resume.json`).
 - **Clean Design:** Professional typography and icons using Google Fonts and Font Awesome.
