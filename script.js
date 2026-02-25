@@ -17,6 +17,7 @@ function populateResume(data) {
     // Contact Bar
     document.getElementById('email').textContent = personalInfo.email || '';
     document.getElementById('phone').textContent = personalInfo.phone || '';
+    document.getElementById('location').textContent = personalInfo.currentLocation || '';
     
     if (personalInfo.github) {
         let githubUrl = personalInfo.github;
