@@ -7,11 +7,11 @@ def test_dashboard_loads(page: Page, server: str):
     expect(page.get_by_text("Your Resume Profiles")).to_be_visible()
     expect(page.get_by_text("No profiles found")).to_be_visible()
 
-def test_import_resume_json(page: Page, server: str):
+def test_import_resume_json(page: Page, server: str, import_profile):
     page.goto(server)
     
-    # Click on import button
-    page.get_by_text("Import resume.json").click()
+    # Use fixture to import file
+    import_profile()
     
     # Wait for the profile to appear in the list
     expect(page.get_by_text("Jawahar Vignesh")).to_be_visible()
