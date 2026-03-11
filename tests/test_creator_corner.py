@@ -19,8 +19,8 @@ def test_navbar_present(page: Page, server: str):
 def test_hire_me_modal(page: Page, server: str):
     page.goto(server)
 
-    # Click on "Hire Me" button
-    page.get_by_text("Hire Me").click()
+    # Click on "Work With Me" button
+    page.get_by_text("Work With Me").click()
 
     # Check if modal is visible
     expect(page.get_by_text("Get in touch")).to_be_visible()
