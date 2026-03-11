@@ -18,7 +18,7 @@ class AppNavbar extends HTMLElement {
                     <a href="https://www.linkedin.com/in/jawahar-vignesh-36418022/" target="_blank" class="hover:text-blue-200 transition-colors" title="LinkedIn">
                         <i class="fa-brands fa-linkedin text-xl"></i>
                     </a>
-                    <a href="https://github.com/jawacompu10/simple-web-resume" target="_blank" class="hover:text-blue-200 transition-colors" title="GitHub Project">
+                    <a href="https://github.com/jawacompu10/simple_web_resume" target="_blank" class="hover:text-blue-200 transition-colors" title="GitHub Project">
                         <i class="fa-brands fa-github text-xl"></i>
                     </a>
                     <button @click="showContactModal = true" class="bg-yellow-500 hover:bg-yellow-400 text-blue-900 font-bold py-1 px-4 rounded-full transition-all transform hover:scale-105 text-sm">
