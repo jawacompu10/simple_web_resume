@@ -24,7 +24,7 @@ def test_create_new_profile(page: Page, server: str):
     page.get_by_text("Create New Profile").click()
     
     # Should redirect to edit page
-    expect(page).to_have_url(re.compile(r".*/edit/.*"))
+    expect(page).to_have_url(re.compile(r".*edit.html\?id=.*"))
     
     # Go back to dashboard and check if it's there
     page.goto(server)

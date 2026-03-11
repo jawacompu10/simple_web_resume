@@ -11,7 +11,7 @@ def test_autosave_persists_on_refresh(page: Page, server: str):
     page.wait_for_selector("#form-name")
     
     # Fill in some data
-    page.get_by_label("Name").fill("Autosave Tester")
+    page.locator("#form-name").fill("Autosave Tester")
     page.get_by_label("Title").fill("Persistence Engineer")
     
     # Wait for autosave to trigger (debounce is 2s now)
@@ -24,7 +24,7 @@ def test_autosave_persists_on_refresh(page: Page, server: str):
     page.wait_for_selector("#form-name")
     
     # Check if data persisted
-    expect(page.get_by_label("Name")).to_have_value("Autosave Tester")
+    expect(page.locator("#form-name")).to_have_value("Autosave Tester")
     expect(page.get_by_label("Title")).to_have_value("Persistence Engineer")
 
 def test_autosave_toggle_disables_saving(page: Page, server: str):
@@ -37,7 +37,7 @@ def test_autosave_toggle_disables_saving(page: Page, server: str):
     expect(page.get_by_text("DISABLED")).to_be_visible()
 
     # 2. Type something
-    page.get_by_label("Name").fill("Manual Save Only")
+    page.locator("#form-name").fill("Manual Save Only")
     
     # 3. Wait a bit - should NOT see "AUTOSAVED"
     page.wait_for_timeout(3000)
@@ -46,7 +46,7 @@ def test_autosave_toggle_disables_saving(page: Page, server: str):
     # 4. Refresh - data should be lost (or at least not updated to the new name)
     page.reload()
     page.wait_for_selector("#form-name")
-    expect(page.get_by_label("Name")).not_to_have_value("Manual Save Only")
+    expect(page.locator("#form-name")).not_to_have_value("Manual Save Only")
 
 def test_autosave_toggle_persistence(page: Page, server: str):
     page.goto(server)

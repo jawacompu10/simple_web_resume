@@ -6,8 +6,8 @@ import os
 
 @pytest.fixture(scope="session")
 def server():
-    # Start the FastAPI server in the background
-    process = subprocess.Popen(["uv", "run", "python", "main.py"], env=os.environ)
+    # Start a simple HTTP server in the public directory
+    process = subprocess.Popen(["python3", "-m", "http.server", "8000", "--directory", "public"], env=os.environ)
     
     # Wait for the server to be ready
     url = "http://localhost:8000"
@@ -20,7 +20,6 @@ def server():
                 break
         except requests.exceptions.ConnectionError:
             pass
-        time.time()
         time.sleep(0.5)
     else:
         process.terminate()

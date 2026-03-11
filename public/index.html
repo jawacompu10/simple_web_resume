@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Really Free Resumes</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512' fill='%231e40af'><path d='M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm152 32c13.3 0 32-10.7 32-24s-18.7-24-32-24H160c-13.3 0-32 10.7-32 24s18.7 24 32 24h56zm0 96c13.3 0 32-10.7 32-24s-18.7-24-32-24H160c-13.3 0-32 10.7-32 24s18.7 24 32 24h56z'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/vendor/css/fontawesome.min.css">
+    <script src="static/vendor/js/tailwind.js"></script>
+    <script defer src="static/vendor/js/alpine.js"></script>
+    <script src="static/vendor/js/dexie.js"></script>
+    <script src="static/js/db.js"></script>
+    <script src="static/js/components.js"></script>
+    <style> [x-cloak] { display: none !important; } </style>
+</head>
+<body class="bg-gray-100 min-h-screen" x-data="{ showContactModal: false }">
+    <app-navbar></app-navbar>
+
+    <main class="container mx-auto px-4 py-6">
+        <div x-data="dashboard()" x-init="init()" class="max-w-4xl mx-auto py-8">
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">Your Resume Profiles</h2>
+                
+                <div id="profiles-list" class="space-y-4">
+                    <template x-if="!loaded">
+                        <div class="flex justify-center items-center py-12">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-800"></div>
+                            <span class="ml-3 text-gray-600">Loading your profiles...</span>
+                        </div>
+                    </template>
+
+                    <template x-if="loaded && profiles.length === 0">
+                        <div class="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                            <i class="fa-regular fa-folder-open text-gray-400 text-5xl mb-4"></i>
+                            <p class="text-gray-500 text-lg">No profiles found. Create your first one to get started!</p>
+                        </div>
+                    </template>
+
+                    <div class="grid gap-4" x-show="loaded && profiles.length > 0">
+                        <template x-for="p in profiles" :key="p.id">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between p-5 bg-gray-50 hover:bg-white border border-gray-200 rounded-xl transition-all hover:shadow-md group">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 group-hover:text-blue-700 transition-colors" x-text="p.personalInfo?.name || 'Unnamed Profile'"></h3>
+                                    <p class="text-gray-600 font-medium" x-text="p.personalInfo?.title || 'No Title'"></p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 mt-4 md:mt-0">
+                                    <a :href="'edit.html?id=' + p.id" class="flex items-center bg-white border border-gray-300 hover:border-blue-500 hover:text-blue-600 text-gray-700 px-3 py-2 rounded-lg transition-all" title="Edit Profile">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <a :href="'view.html?id=' + p.id" class="flex items-center bg-white border border-gray-300 hover:border-green-500 hover:text-green-600 text-gray-700 px-3 py-2 rounded-lg transition-all" title="View Resume">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                    <button @click="downloadAsJson(p.id)" class="flex items-center bg-white border border-gray-300 hover:border-yellow-500 hover:text-yellow-600 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold transition-all" title="Download JSON">
+                                        <i class="fa-solid fa-download mr-2"></i> JSON
+                                    </button>
+                                    <button @click="duplicateProfile(p.id)" class="flex items-center bg-white border border-gray-300 hover:border-purple-500 hover:text-purple-600 text-gray-700 px-3 py-2 rounded-lg transition-all" title="Duplicate Profile">
+                                        <i class="fa-solid fa-copy"></i>
+                                    </button>
+                                    <button @click="printPdf(p.id)" class="flex items-center bg-white border border-gray-300 hover:border-blue-500 hover:text-blue-600 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold transition-all" title="Print to PDF">
+                                        <i class="fa-solid fa-file-pdf mr-2"></i> PDF
+                                    </button>
+                                    <button @click="deleteProfileHandler(p.id)" class="flex items-center bg-white border border-gray-300 hover:border-red-500 hover:text-red-600 text-gray-700 px-3 py-2 rounded-lg transition-all" title="Delete Profile">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+                    <button @click="createNewProfile()" class="flex items-center justify-center bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md">
+                        <i class="fa-solid fa-plus mr-2"></i> Create New Profile
+                    </button>
+                    <button @click="importProfile()" class="flex items-center justify-center bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md">
+                        <i class="fa-solid fa-file-import mr-2"></i> Import resume.json
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg shadow-sm" 
+                 x-data="{ 
+                    showInfoModal: false,
+                    init() {
+                        if (!localStorage.getItem('hasSeenStorageInfo')) {
+                            setTimeout(() => this.showInfoModal = true, 500);
+                        }
+                    },
+                    closeModal() {
+                        this.showInfoModal = false;
+                        localStorage.setItem('hasSeenStorageInfo', 'true');
+                    }
+                 }">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fa-solid fa-circle-info text-blue-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-blue-700 italic flex items-center">
+                            All your data is stored locally in your browser (IndexedDB). No data is sent to our servers.
+                            <button @click="showInfoModal = true" title="What does this mean?" class="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none transition-colors">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+                <storage-info-modal></storage-info-modal>
+            </div>
+
+            <footer class="mt-12 py-6 text-center border-t border-gray-200">
+                <p class="text-xs text-gray-400 font-medium tracking-wide uppercase">
+                    This site is powered by <a href="https://www.netlify.com" target="_blank" class="text-blue-400 hover:text-blue-600 transition-colors">Netlify</a>
+                </p>
+            </footer>
+        </div>
+    </main>
+
+    <contact-modal></contact-modal>
+
+    <script>
+        function dashboard() {
+            return {
+                profiles: [],
+                loaded: false,
+                async init() { await this.loadProfiles(); },
+                async loadProfiles() { this.profiles = await getAllProfiles(); this.loaded = true; },
+                async downloadAsJson(id) { const p = this.profiles.find(profile => profile.id === id); if (p) downloadProfileAsJson(p); },
+                async duplicateProfile(id) {
+                    const profile = this.profiles.find(p => p.id === id);
+                    if (profile) {
+                        const copy = JSON.parse(JSON.stringify(profile));
+                        delete copy.id;
+                        if (copy.personalInfo) copy.personalInfo.name = (copy.personalInfo.name || "Profile") + " (Copy)";
+                        await saveProfile(copy);
+                        await this.loadProfiles();
+                    }
+                },
+                printPdf(id) { window.open(`view.html?id=${id}&print=true`, '_blank'); },
+                async createNewProfile() {
+                    const id = await saveProfile({ personalInfo: { name: "New Profile", title: "Software Engineer" }, summary: "", experience: [], education: [], skills: {} });
+                    window.location.href = `edit.html?id=${id}`;
+                },
+                async importProfile() {
+                    try {
+                        const response = await fetch('static/resume.json');
+                        const data = await response.json();
+                        await saveProfile(data);
+                        await this.loadProfiles();
+                    } catch (error) { console.error('Error:', error); alert('Failed to import.'); }
+                },
+                async deleteProfileHandler(id) {
+                    if (confirm('Are you sure?')) { await deleteProfile(id); await this.loadProfiles(); }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
