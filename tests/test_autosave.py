@@ -14,8 +14,7 @@ def test_autosave_persists_on_refresh(page: Page, server: str):
     page.get_by_label("Name").fill("Autosave Tester")
     page.get_by_label("Title").fill("Persistence Engineer")
     
-    # Wait for autosave to trigger (debounce is 1.5s)
-    # We look for the visual indicator
+    # Wait for autosave to trigger (debounce is 2s now)
     expect(page.get_by_text("AUTOSAVED")).to_be_visible(timeout=5000)
     
     # Refresh the page
@@ -27,7 +26,41 @@ def test_autosave_persists_on_refresh(page: Page, server: str):
     # Check if data persisted
     expect(page.get_by_label("Name")).to_have_value("Autosave Tester")
     expect(page.get_by_label("Title")).to_have_value("Persistence Engineer")
+
+def test_autosave_toggle_disables_saving(page: Page, server: str):
+    page.goto(server)
+    page.get_by_text("Create New Profile").click()
+    page.wait_for_selector("#form-name")
+
+    # 1. Disable Autosave
+    page.get_by_label("Autosave").click()
+    expect(page.get_by_text("DISABLED")).to_be_visible()
+
+    # 2. Type something
+    page.get_by_label("Name").fill("Manual Save Only")
     
-    # Check preview too
-    preview = page.locator("#resume-preview")
-    expect(preview.locator("#name")).to_have_text("Autosave Tester")
+    # 3. Wait a bit - should NOT see "AUTOSAVED"
+    page.wait_for_timeout(3000)
+    expect(page.get_by_text("AUTOSAVED")).not_to_be_visible()
+
+    # 4. Refresh - data should be lost (or at least not updated to the new name)
+    page.reload()
+    page.wait_for_selector("#form-name")
+    expect(page.get_by_label("Name")).not_to_have_value("Manual Save Only")
+
+def test_autosave_toggle_persistence(page: Page, server: str):
+    page.goto(server)
+    page.get_by_text("Create New Profile").click()
+    page.wait_for_selector("#form-name")
+
+    # Disable it
+    page.get_by_label("Autosave").click()
+    expect(page.get_by_text("DISABLED")).to_be_visible()
+
+    # Refresh
+    page.reload()
+    page.wait_for_selector("#form-name")
+
+    # Should still be disabled
+    expect(page.get_by_text("DISABLED")).to_be_visible()
+    expect(page.get_by_label("Autosave")).not_to_be_checked()

@@ -14,7 +14,7 @@ def test_edit_profile_saves(page: Page, server: str):
 
     # Save (handle dialog first)
     page.on("dialog", lambda dialog: dialog.accept())
-    page.get_by_text("Save Profile").click()
+    page.locator(".save-profile-btn").click()
 
     # Wait for redirect to dashboard
     expect(page).to_have_url(server + "/")
