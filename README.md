@@ -1,69 +1,53 @@
-# Simple Web Resume
+# Really Free Resumes
 
-A clean, responsive, and data-driven resume template that populates content from a JSON file. This project is designed for easy customization and professional printing.
-
-<img width="928" height="1045" alt="image" src="https://github.com/user-attachments/assets/663fa540-3acf-4a01-b6fb-6e4af42a2dc6" />
-
+A modern, responsive, and data-driven resume builder that stores data locally in your browser. This project is designed for easy customization, multiple profile management, and professional printing. **No backend required.**
 
 ## Features
-- **JSON Driven:** Update your resume content in one place (`resume.json`).
-- **Clean Design:** Professional typography and icons using Google Fonts and Font Awesome.
+- **JSON Driven:** Update your resume content easily via a form or direct JSON edit.
+- **Multiple Profiles:** Create and manage multiple resume profiles (e.g., SDE, QA, Manager) stored locally in IndexedDB.
+- **Autosave:** Your changes are automatically saved as you type (can be toggled).
+- **Live Preview:** See your changes in real-time as you edit your profile.
 - **Print Optimized:** Styled specifically for "Save to PDF" to ensure a high-quality physical or digital document.
-- **No Build Step:** Pure HTML, CSS, and Vanilla JavaScript.
+- **Local First & Private:** Your data stays in your browser. No data is sent to any server.
+- **Offline Ready**: Works completely without a server.
 
-## Setup & Customization
+## Tech Stack
+- **Frontend:** Plain HTML, Tailwind CSS, Alpine.js.
+- **Components**: Native Web Components for shared UI (Navbar, Modals).
+- **Storage:** IndexedDB (via Dexie.js) - local storage in the browser.
+- **No Dependencies**: All libraries are hosted locally in `static/vendor`.
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yourusername/simple-web-resume.git
-   cd simple-web-resume
-   ```
+## Setup & Running
 
-2. **Edit your details:**
-   Open `resume.json` and replace the placeholder text with your own information. You can update:
-   - Personal details (Name, Title, Contact Info)
-   - Professional Summary
-   - Key Achievements & Project Highlights
-   - Work Experience & Education
-   - Skills (categorized by type)
+This is a **purely static application**. You don't need to install any backend dependencies.
 
-## How to Run Locally
+### Running Locally
+To avoid CORS issues and keep your project files secure, serve the `public` directory:
 
-Since the project uses the JavaScript `fetch` API to load `resume.json`, it must be served through a local web server to avoid CORS (Cross-Origin Resource Sharing) issues when opening the file directly.
-
-### Using Python (3.x)
-Python comes with a built-in HTTP server:
+**Using Python:**
 ```bash
-python3 -m http.server 8000
+python3 -m http.server 8000 --directory public
 ```
 
-After running the command, open your browser and navigate to:
-`http://localhost:8000`
-
-### Using Node.js
-If you have Node.js installed, you can use `npx` to run a server without installing it:
+**Using Node.js:**
 ```bash
-npx serve
+npx serve public
 ```
-*Note: This usually runs on `http://localhost:3000` or `http://localhost:5000`.*
 
+After running the command, open `http://localhost:8000` in your browser.
 
-## Printing to PDF
+## Deployment
+This app is perfect for **Netlify**, **GitHub Pages**, or **Vercel**. Just upload the repository or the files in the root directory.
 
-This resume is optimized for printing directly from the browser:
+## Acknowledgements
+This project is built upon the amazing work of the open-source community. Special thanks to:
 
-1. Open the resume in your browser (e.g., Chrome, Edge, or Firefox) via the local server.
-2. Press `Ctrl + P` (or `Cmd + P` on Mac).
-3. In the Print dialog:
-   - **Destination:** Select "Save as PDF" or "Microsoft Print to PDF".
-   - **Layout:** Portrait.
-   - **Margins:** Set to "Default" or "None" (recommended "Default").
-   - **Options:** Ensure "Background graphics" is checked if you want to preserve any background colors or icons.
-   - Remove "Headers and Footers" in Options
-4. Click **Save**.
+- [Alpine.js](https://alpinejs.dev/) for providing lightweight reactivity.
+- [Tailwind CSS](https://tailwindcss.com/) for modern UI development.
+- [Dexie.js](https://dexie.org/) for the elegant wrapper around IndexedDB.
+- [Font Awesome](https://fontawesome.com/) for the beautiful icons.
+- [Google Fonts](https://fonts.google.com/) for the professional typography.
+- [Formspree](https://formspree.io/) for power the contact form without a backend.
 
-## Project Structure
-- `index.html`: The main structure and layout.
-- `style.css`: All styling and print-specific media queries.
-- `script.js`: Logic to fetch data from JSON and inject it into the DOM.
-- `resume.json`: Your resume data.
+## Compliance
+This site is powered by [Netlify](https://www.netlify.com).

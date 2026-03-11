@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Really Free Resumes</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512' fill='%231e40af'><path d='M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm152 32c13.3 0 32-10.7 32-24s-18.7-24-32-24H160c-13.3 0-32 10.7-32 24s18.7 24 32 24h56zm0 96c13.3 0 32-10.7 32-24s-18.7-24-32-24H160c-13.3 0-32 10.7-32 24s18.7 24 32 24h56z'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/vendor/css/fontawesome.min.css">
+    <script src="static/vendor/js/tailwind.js"></script>
+    <script defer src="static/vendor/js/alpine.js"></script>
+    <script src="static/vendor/js/dexie.js"></script>
+    <script src="static/js/db.js"></script>
+    <script src="static/js/resume_viewer.js"></script>
+    <script src="static/js/components.js"></script>
+    <style> [x-cloak] { display: none !important; } </style>
+</head>
+<body class="bg-gray-100 min-h-screen" x-data="{ showContactModal: false }">
+    <app-navbar></app-navbar>
+
+    <main class="container mx-auto px-4 py-6">
+        <div x-data="resumeEditor()" x-init="init()" class="flex flex-col lg:flex-row gap-8 min-h-[calc(100vh-120px)]">
+            <!-- Form Side -->
+            <div id="form-container" class="lg:w-1/2 bg-white rounded-xl shadow-lg p-6 overflow-y-auto max-h-[85vh]">
+                <div class="flex items-center justify-between mb-6 border-b pb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Edit Profile Details</h2>
+                    <button @click="saveAndExit()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-md flex items-center save-profile-btn">
+                        <i class="fa-solid fa-floppy-disk mr-2"></i> Save Profile
+                    </button>
+                </div>
+                
+                <div x-show="!loaded" class="text-gray-500 animate-pulse">Loading your data...</div>
+                
+                <div x-show="loaded" x-cloak>
+                    <form id="edit-profile-form">
+                        <!-- Personal Info -->
+                        <section>
+                            <h3 class="text-xl font-semibold mb-4 text-blue-800">Personal Info</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label for="form-name" class="block text-sm font-medium text-gray-700">Name</label>
+                                    <input type="text" id="form-name" name="personalInfo[name]" x-model="profile.personalInfo.name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-title" class="block text-sm font-medium text-gray-700">Title</label>
+                                    <input type="text" id="form-title" name="personalInfo[title]" x-model="profile.personalInfo.title" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div class="form-group md:col-span-2">
+                                    <label for="form-branding" class="block text-sm font-medium text-gray-700">Branding</label>
+                                    <input type="text" id="form-branding" name="personalInfo[branding]" x-model="profile.personalInfo.branding" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-email" class="block text-sm font-medium text-gray-700">Email</label>
+                                    <input type="email" id="form-email" name="personalInfo[email]" x-model="profile.personalInfo.email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                                    <input type="text" id="form-phone" name="personalInfo[phone]" x-model="profile.personalInfo.phone" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-linkedin" class="block text-sm font-medium text-gray-700">LinkedIn URL</label>
+                                    <input type="url" id="form-linkedin" name="personalInfo[linkedin]" x-model="profile.personalInfo.linkedin" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-github" class="block text-sm font-medium text-gray-700">GitHub URL</label>
+                                    <input type="url" id="form-github" name="personalInfo[github]" x-model="profile.personalInfo.github" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-website" class="block text-sm font-medium text-gray-700">Website URL (Optional)</label>
+                                    <input type="url" id="form-website" name="personalInfo[website]" x-model="profile.personalInfo.website" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                                <div class="form-group md:col-span-2">
+                                    <label for="form-currentLocation" class="block text-sm font-medium text-gray-700">Location</label>
+                                    <input type="text" id="form-currentLocation" name="personalInfo[currentLocation]" x-model="profile.personalInfo.currentLocation" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Summary -->
+                        <section class="mt-8">
+                            <h3 class="text-xl font-semibold mb-4 text-blue-800">Summary</h3>
+                            <label for="form-summary" class="sr-only">Summary</label>
+                            <textarea id="form-summary" name="summary" x-model="profile.summary" rows="4" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+                        </section>
+
+                        <!-- Key Achievements -->
+                        <section class="mt-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-semibold text-blue-800">Key Achievements</h3>
+                                <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">One per line</span>
+                            </div>
+                            <label for="form-keyAchievements" class="sr-only">Key Achievements</label>
+                            <textarea id="form-keyAchievements" name="keyAchievements"
+                                      x-init="$el.value = Array.isArray(profile.keyAchievements) ? profile.keyAchievements.join('\n') : ''"
+                                      @input="profile.keyAchievements = $event.target.value.split('\n').filter(line => line.trim() !== '')"
+                                      rows="4" placeholder="Won Employee of the Month..." 
+                                      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+                        </section>
+
+                        <!-- Project Highlights -->
+                        <section class="mt-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-semibold text-blue-800">Project Highlights</h3>
+                                <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">One per line</span>
+                            </div>
+                            <label for="form-projectHighlights" class="sr-only">Project Highlights</label>
+                            <textarea id="form-projectHighlights" name="projectHighlights"
+                                      x-init="$el.value = Array.isArray(profile.projectHighlights) ? profile.projectHighlights.join('\n') : ''"
+                                      @input="profile.projectHighlights = $event.target.value.split('\n').filter(line => line.trim() !== '')"
+                                      rows="4" placeholder="Migration to Playwright..." 
+                                      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+                        </section>
+
+                        <!-- Skills -->
+                        <section id="skills-section" class="mt-8">
+                            <h3 class="text-xl font-semibold mb-4 text-blue-800">Skills</h3>
+                            <div id="skill-categories-container">
+                                <template x-for="(cat, index) in skillCategories" :key="index">
+                                    <div class="skill-category-form bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 relative">
+                                        <button type="button" @click="removeSkillCategory(index)" class="absolute top-2 right-2 text-red-500 hover:text-red-700 remove-skill-btn">
+                                            <i class="fa-solid fa-circle-xmark text-xl"></i>
+                                        </button>
+                                        <div class="space-y-4">
+                                            <div class="form-group">
+                                                <label class="block text-sm font-medium text-gray-700">Category Name</label>
+                                                <input type="text" :name="'skills[' + index + '][name]'" x-model="cat.name" placeholder="e.g. Frontend" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="block text-sm font-medium text-gray-700">Skills (One per line)</label>
+                                                <textarea :name="'skills[' + index + '][items]'" x-model="cat.items" placeholder="React&#10;Tailwind" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            <button type="button" @click="addSkillCategory()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-blue-600 hover:border-blue-400 transition-colors">
+                                <i class="fa-solid fa-plus mr-2"></i> Add Skill Category
+                            </button>
+                        </section>
+
+                        <!-- Work Experience -->
+                        <section id="experience-section" class="mt-8">
+                            <h3 class="text-xl font-semibold mb-4 text-blue-800">Work Experience</h3>
+                            <div id="experience-items-container">
+                                <template x-for="(exp, index) in profile.experience" :key="index">
+                                    <div class="experience-item-form bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 relative">
+                                        <button type="button" @click="removeExperience(index)" class="absolute top-2 right-2 text-red-500 hover:text-red-700 remove-exp-btn">
+                                            <i class="fa-solid fa-circle-xmark text-xl"></i>
+                                        </button>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="form-group">
+                                                <input type="text" :name="'experience[' + index + '][title]'" x-model="exp.title" placeholder="Job Title" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="text" :name="'experience[' + index + '][company]'" x-model="exp.company" placeholder="Company" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                            </div>
+                                            <div class="form-group md:col-span-2">
+                                                <input type="text" :name="'experience[' + index + '][years]'" x-model="exp.years" placeholder="Years (e.g., 2020 - 2022)" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                            </div>
+                                            <div class="form-group md:col-span-2">
+                                                <textarea :name="'experience[' + index + '][description]'" 
+                                                          placeholder="Description (one point per line)" rows="3" 
+                                                          class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                                          x-init="$el.value = Array.isArray(exp.description) ? exp.description.join('\n') : ''"
+                                                          @input="exp.description = $event.target.value.split('\n').filter(line => line.trim() !== '')"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            <button type="button" @click="addExperience()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-blue-600 hover:border-blue-400 transition-colors">
+                                <i class="fa-solid fa-plus mr-2"></i> Add Experience
+                            </button>
+                        </section>
+
+                        <!-- Education -->
+                        <section id="education-section" class="mt-8">
+                            <h3 class="text-xl font-semibold mb-4 text-blue-800">Education</h3>
+                            <div id="education-items-container">
+                                <template x-for="(edu, index) in profile.education" :key="index">
+                                    <div class="education-item-form bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 relative">
+                                        <button type="button" @click="removeEducation(index)" class="absolute top-2 right-2 text-red-500 hover:text-red-700 remove-edu-btn">
+                                            <i class="fa-solid fa-circle-xmark text-xl"></i>
+                                        </button>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="form-group">
+                                                <label class="block text-sm font-medium text-gray-700">Degree</label>
+                                                <input type="text" :name="'education[' + index + '][degree]'" x-model="edu.degree" placeholder="e.g. Master of Science" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="block text-sm font-medium text-gray-700">University</label>
+                                                <input type="text" :name="'education[' + index + '][university]'" x-model="edu.university" placeholder="e.g. BITS, Pilani" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                            </div>
+                                            <div class="form-group md:col-span-2">
+                                                <label class="block text-sm font-medium text-gray-700">Years</label>
+                                                <input type="text" :name="'education[' + index + '][years]'" x-model="edu.years" placeholder="e.g. 2010 - 2014" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            <button type="button" @click="addEducation()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-blue-600 hover:border-blue-400 transition-colors">
+                                <i class="fa-solid fa-plus mr-2"></i> Add Education
+                            </button>
+                        </section>
+
+                        <div class="mt-10 pt-6 border-t flex justify-end space-x-4">
+                            <a href="index.html" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">Cancel</a>
+                            <button type="button" @click="saveAndExit()" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-md save-profile-btn-manual">
+                                Save Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Preview Side -->
+            <div class="lg:w-1/2">
+                <div class="sticky top-6">
+                    <div class="flex items-center justify-between mb-4 px-2">
+                        <div class="flex items-center gap-3">
+                            <h3 class="text-lg font-semibold text-gray-700 uppercase tracking-wider">
+                                <i class="fa-solid fa-magnifying-glass mr-2 text-blue-500"></i> Live Preview
+                            </h3>
+                            <a :href="'view.html?id=' + profileId" target="_blank" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-2 py-1 rounded border border-gray-300 transition-colors flex items-center" title="Open Full View in new tab">
+                                <i class="fa-solid fa-up-right-from-square mr-1"></i> Full View
+                            </a>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <!-- Autosave Toggle -->
+                            <label class="flex items-center cursor-pointer group" title="Toggle automatic saving">
+                                <div class="relative">
+                                    <input type="checkbox" x-model="isAutosaveEnabled" class="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10">
+                                    <div class="w-10 h-5 bg-gray-300 rounded-full shadow-inner transition-colors" :class="isAutosaveEnabled ? 'bg-blue-500' : 'bg-gray-400'"></div>
+                                    <div class="absolute left-1 top-1 bg-white w-3 h-3 rounded-full shadow transition-transform transform" :class="isAutosaveEnabled ? 'translate-x-5' : 'translate-x-0'"></div>
+                                </div>
+                                <span class="ml-2 text-xs font-bold text-gray-500 uppercase tracking-tighter group-hover:text-gray-700 transition-colors">Autosave</span>
+                            </label>
+
+                            <span id="save-status" class="text-xs px-2 py-1 rounded-full font-bold flex items-center transition-all duration-300"
+                                  :class="isAutosaveEnabled ? (autosaving ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700') : 'bg-gray-100 text-gray-500'">
+                                <span class="w-2 h-2 rounded-full mr-1.5" 
+                                      :class="isAutosaveEnabled ? (autosaving ? 'bg-blue-500 animate-ping' : 'bg-green-500') : 'bg-gray-400'"></span>
+                                <span x-text="!isAutosaveEnabled ? 'DISABLED' : (autosaving ? 'AUTOSAVED' : 'SYNCED')"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div id="resume-preview" class="bg-white rounded-xl shadow-2xl overflow-y-auto max-h-[80vh] border-t-4 border-blue-600">
+                        <div class="resume-container" :data-profile-id="profileId">
+                            <header class="header-clean">
+                                <h1 id="name"></h1>
+                                <h2 id="title"></h2>
+                                <div id="branding" class="branding-text"></div>
+                                
+                                <div class="contact-info-clean">
+                                    <div class="contact-row">
+                                        <span class="contact-item"><i class="fas fa-envelope"></i> <span id="email"></span></span>
+                                        <span class="contact-sep">|</span>
+                                        <span class="contact-item"><i class="fas fa-mobile-alt"></i> <span id="phone"></span></span>
+                                        <span class="contact-sep">|</span>
+                                        <span class="contact-item"><i class="fas fa-map-marker-alt"></i> <span id="location">Dubai, UAE</span></span>
+                                    </div>
+                                    <div class="contact-row">
+                                        <span class="contact-item"><i class="fab fa-linkedin"></i> <a href="#" id="linkedin" target="_blank">LinkedIn</a></span>
+                                        <span class="contact-sep">|</span>
+                                        <span class="contact-item"><i class="fab fa-github"></i> <a href="#" id="github" target="_blank">GitHub</a></span>
+                                        <span id="website-container" style="display: none;">
+                                            <span class="contact-sep">|</span>
+                                            <span class="contact-item"><i class="fas fa-globe"></i> <a href="#" id="website" target="_blank">Website</a></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </header>
+
+                            <div class="main-content single-column">
+                                <section class="section">
+                                    <h3 class="section-title">PROFESSIONAL SUMMARY</h3>
+                                    <p id="summary" class="summary-clean"></p>    
+                                </section>
+
+                                <section class="section">
+                                    <h3 class="section-title">SKILLS</h3>
+                                    <div id="skills-list" class="skills-container"></div>
+                                </section>
+
+                                <section class="section" id="key-achievements-section" style="display: none;">
+                                    <h3 class="section-title">KEY ACHIEVEMENTS</h3>
+                                    <ul id="key-achievements-list" class="job-desc"></ul>
+                                </section>
+
+                                <section class="section" id="project-highlights-section" style="display: none;">
+                                    <h3 class="section-title">PROJECT HIGHLIGHTS</h3>
+                                    <ul id="project-highlights-list" class="job-desc"></ul>
+                                </section>
+
+                                <section class="section">
+                                    <h3 class="section-title">WORK EXPERIENCE</h3>
+                                    <div id="experience-list"></div>
+                                </section>
+
+                                <section>
+                                    <h3 class="section-title">EDUCATION</h3>
+                                    <div id="education-list"></div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <p class="text-sm text-gray-500 italic">
+                            <i class="fa-solid fa-circle-info mr-1"></i>
+                            This is a preview. The actual PDF may vary slightly based on print settings.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <contact-modal></contact-modal>
+
+    <script>
+        function resumeEditor() {
+            return {
+                profileId: new URLSearchParams(window.location.search).get('id'),
+                profile: { personalInfo: {}, summary: '', keyAchievements: [], projectHighlights: [], experience: [], education: [], skills: {} },
+                skillCategories: [],
+                loaded: false,
+                autosaving: false,
+                isAutosaveEnabled: localStorage.getItem('autosaveEnabled') !== 'false',
+                lastSavedHash: '',
+
+                async init() {
+                    const data = await getProfile(this.profileId);
+                    if (!data) { alert('Profile not found!'); window.location.href = 'index.html'; return; }
+                    this.profile = { ...this.profile, ...data };
+                    this.skillCategories = Object.entries(data.skills || {}).map(([name, items]) => ({ name, items: Array.isArray(items) ? items.join('\n') : '' }));
+                    this.lastSavedHash = JSON.stringify(this.profile);
+                    this.loaded = true;
+                    this.updatePreview();
+                    this.$watch('profile', () => { this.updatePreview(); if (this.isAutosaveEnabled) this.triggerAutoSave(); });
+                    this.$watch('skillCategories', () => { this.syncSkills(); this.updatePreview(); if (this.isAutosaveEnabled) this.triggerAutoSave(); });
+                    this.$watch('isAutosaveEnabled', (val) => { localStorage.setItem('autosaveEnabled', val); });
+                },
+                syncSkills() {
+                    const skillsObj = {};
+                    this.skillCategories.forEach(cat => { if (cat.name.trim()) skillsObj[cat.name] = cat.items.split('\n').filter(i => i.trim()); });
+                    if (JSON.stringify(this.profile.skills) !== JSON.stringify(skillsObj)) this.profile.skills = skillsObj;
+                },
+                updatePreview() { populateResume(JSON.parse(JSON.stringify(this.profile))); },
+                triggerAutoSave() {
+                    const currentHash = JSON.stringify(this.profile);
+                    if (currentHash !== this.lastSavedHash) this.debouncedSave();
+                },
+                addExperience() { this.profile.experience.push({ title: '', company: '', years: '', description: [] }); },
+                removeExperience(index) { this.profile.experience.splice(index, 1); },
+                addEducation() { this.profile.education.push({ degree: '', university: '', years: '' }); },
+                removeEducation(index) { this.profile.education.splice(index, 1); },
+                addSkillCategory() { this.skillCategories.push({ name: '', items: '' }); },
+                removeSkillCategory(index) { this.skillCategories.splice(index, 1); },
+                async saveAndExit() {
+                    this.syncSkills();
+                    await saveProfile(JSON.parse(JSON.stringify(this.profile)));
+                    alert('Saved!');
+                    window.location.href = 'index.html';
+                },
+                debouncedSave: debounce(async function() {
+                    this.autosaving = true;
+                    this.syncSkills();
+                    const plainData = JSON.parse(JSON.stringify(this.profile));
+                    const currentHash = JSON.stringify(plainData);
+                    if (currentHash !== this.lastSavedHash) {
+                        await saveProfile(plainData);
+                        this.lastSavedHash = currentHash;
+                    }
+                    setTimeout(() => this.autosaving = false, 1500);
+                }, 2000)
+            }
+        }
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this, args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
+        }
+    </script>
+    <style>
+        #resume-preview .resume-container { box-shadow: none; padding: 0; margin: 0; width: 100%; border-left: none; }
+        #resume-preview .header-clean, #resume-preview .main-content { border-left: none; }
+    </style>
+</body>
+</html>
