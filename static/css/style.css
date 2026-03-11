@@ -169,11 +169,6 @@ body {
     border-left: 1px solid #b0c4de;
 }
 
-.skill-category:first-child {
-    padding-left: 0;
-    border-left: none;
-}
-
 .skill-category-name {
     font-weight: 700;
     color: #2b6cb0;

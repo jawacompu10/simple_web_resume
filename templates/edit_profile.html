@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - My Resume{% endblock %}
+
+{% block content %}
+<div class="flex flex-col lg:flex-row gap-8 min-h-[calc(100vh-120px)]">
+    <!-- Form Side -->
+    <div id="form-container" class="lg:w-1/2 bg-white rounded-xl shadow-lg p-6 overflow-y-auto max-h-[85vh]">
+        <div class="flex items-center justify-between mb-6 border-b pb-4">
+            <h2 class="text-2xl font-bold text-gray-800">Edit Profile Details</h2>
+            <button onclick="saveProfileData()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-md flex items-center">
+                <i class="fa-solid fa-floppy-disk mr-2"></i> Save Profile
+            </button>
+        </div>
+        <p class="text-gray-500 animate-pulse">Loading form configuration...</p>
+    </div>
+
+    <!-- Preview Side -->
+    <div class="lg:w-1/2">
+        <div class="sticky top-6">
+            <div class="flex items-center justify-between mb-4 px-2">
+                <h3 class="text-lg font-semibold text-gray-700 uppercase tracking-wider">
+                    <i class="fa-solid fa-magnifying-glass mr-2 text-blue-500"></i> Live Preview
+                </h3>
+                <span id="save-status" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold flex items-center">
+                    <span class="w-2 h-2 bg-green-500 rounded-full mr-1.5 animate-ping"></span>
+                    <span>SYNCED</span>
+                </span>
+            </div>
+            <div id="resume-preview" class="bg-white rounded-xl shadow-2xl overflow-y-auto max-h-[80vh] border-t-4 border-blue-600">
+                <!-- Reusing the same layout as index.html -->
+                {% include 'partials/resume_layout.html' %}
+            </div>
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-500 italic">
+                    <i class="fa-solid fa-circle-info mr-1"></i>
+                    This is a preview. The actual PDF may vary slightly based on print settings.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/resume_viewer.js"></script>
+<script>
+    const profileId = "{{ profile_id }}";
+
+    async function initForm() {
+        const profile = await getProfile(profileId);
+        if (!profile) {
+            alert('Profile not found!');
+            window.location.href = '/';
+            return;
+        }
+
+        // Render the form via FastAPI
+        const response = await fetch('/render-form', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(profile)
+        });
+        const html = await response.text();
+        document.getElementById('form-container').innerHTML = html;
+        
+        // Add event listener for change to trigger preview and autosave
+        document.getElementById('edit-profile-form').addEventListener('input', () => {
+            updatePreview();
+            debouncedAutosave();
+        });
+        
+        // Trigger initial preview
+        updatePreview();
+    }
+
+    function updatePreview() {
+        // Collect form data and populate the preview directly using resume_viewer.js logic
+        const data = collectFormData();
+        populateResume(data);
+    }
+
+    // Debounce function to prevent constant DB writes
+    function debounce(func, timeout = 1000) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        };
+    }
+
+    const debouncedAutosave = debounce(async () => {
+        const data = collectFormData();
+        await saveProfile(data);
+        console.log('Profile autosaved to IndexedDB');
+        
+        // Visual indicator for autosave
+        const status = document.getElementById('save-status');
+        if (status) {
+            const innerSpan = status.querySelector('span:last-child') || status;
+            innerSpan.textContent = 'AUTOSAVED';
+            status.classList.remove('bg-green-100', 'text-green-700');
+            status.classList.add('bg-blue-100', 'text-blue-700');
+            
+            setTimeout(() => {
+                innerSpan.textContent = 'SYNCED';
+                status.classList.remove('bg-blue-100', 'text-blue-700');
+                status.classList.add('bg-green-100', 'text-green-700');
+            }, 2000);
+        }
+    }, 1500);
+
+    function collectFormData() {
+        const form = document.getElementById('edit-profile-form');
+        if (!form) return {};
+        const formData = new FormData(form);
+        const data = {
+            id: Number(profileId),
+            personalInfo: {},
+            summary: formData.get('summary'),
+            keyAchievements: formData.get('keyAchievements') ? formData.get('keyAchievements').split('\n').filter(l => l.trim() !== '') : [],
+            projectHighlights: formData.get('projectHighlights') ? formData.get('projectHighlights').split('\n').filter(l => l.trim() !== '') : [],
+            experience: [],
+            education: [],
+            skills: {}
+        };
+
+        const tempSkills = [];
+
+        for (let [key, value] of formData.entries()) {
+            if (key.startsWith('personalInfo[')) {
+                const subKey = key.match(/\[(.*?)\]/)[1];
+                data.personalInfo[subKey] = value;
+            } else if (key.startsWith('experience[')) {
+                const match = key.match(/experience\[(\d+)\]\[(.*?)\]/);
+                if (match) {
+                    const index = parseInt(match[1]);
+                    const field = match[2];
+                    if (!data.experience[index]) data.experience[index] = { description: [] };
+                    
+                    if (field === 'description') {
+                        data.experience[index].description = value.split('\n').filter(l => l.trim() !== '');
+                    } else {
+                        data.experience[index][field] = value;
+                    }
+                }
+            } else if (key.startsWith('education[')) {
+                const match = key.match(/education\[(\d+)\]\[(.*?)\]/);
+                if (match) {
+                    const index = parseInt(match[1]);
+                    const field = match[2];
+                    if (!data.education[index]) data.education[index] = {};
+                    data.education[index][field] = value;
+                }
+            } else if (key.startsWith('skills[')) {
+                const match = key.match(/skills\[(\d+)\]\[(.*?)\]/);
+                if (match) {
+                    const index = parseInt(match[1]);
+                    const field = match[2];
+                    if (!tempSkills[index]) tempSkills[index] = {};
+                    tempSkills[index][field] = value;
+                }
+            }
+        }
+        
+        // Finalize skills object
+        tempSkills.forEach(s => {
+            if (s && s.name && s.name.trim() !== '') {
+                data.skills[s.name] = s.items ? s.items.split('\n').filter(l => l.trim() !== '') : [];
+            }
+        });
+
+        // Clean up arrays (in case of gaps)
+        data.experience = data.experience.filter(e => e !== undefined);
+        data.education = data.education.filter(e => e !== undefined);
+        
+        return data;
+    }
+
+    async function addExperience() {
+        const container = document.getElementById('experience-items-container');
+        const count = container.querySelectorAll('.experience-item-form').length;
+        
+        try {
+            const response = await fetch(`/add-experience?index=${count}`);
+            const html = await response.text();
+            
+            container.insertAdjacentHTML('beforeend', html);
+            const newEl = document.getElementById(`experience-item-${count}`);
+            
+            if (newEl) {
+                // Add event listener to new elements
+                newEl.querySelectorAll('input, textarea').forEach(el => {
+                    el.addEventListener('input', () => {
+                        updatePreview();
+                        debouncedAutosave();
+                    });
+                });
+                updatePreview();
+            }
+        } catch (error) {
+            console.error('Error adding experience:', error);
+        }
+    }
+
+    async function addSkillCategory() {
+        const container = document.getElementById('skill-categories-container');
+        const count = container.querySelectorAll('.skill-category-form').length;
+        
+        try {
+            const response = await fetch(`/add-skill-category?index=${count}`);
+            const html = await response.text();
+            
+            container.insertAdjacentHTML('beforeend', html);
+            const newEl = document.getElementById(`skill-category-${count}`);
+            
+            if (newEl) {
+                // Add event listener to new elements
+                newEl.querySelectorAll('input, textarea').forEach(el => {
+                    el.addEventListener('input', () => {
+                        updatePreview();
+                        debouncedAutosave();
+                    });
+                });
+                updatePreview();
+            }
+        } catch (error) {
+            console.error('Error adding skill category:', error);
+        }
+    }
+
+    async function addEducation() {
+        const container = document.getElementById('education-items-container');
+        const count = container.querySelectorAll('.education-item-form').length;
+        
+        try {
+            const response = await fetch(`/add-education?index=${count}`);
+            const html = await response.text();
+            
+            container.insertAdjacentHTML('beforeend', html);
+            const newEl = document.getElementById(`education-item-${count}`);
+            
+            if (newEl) {
+                // Add event listener to new elements
+                newEl.querySelectorAll('input, textarea').forEach(el => {
+                    el.addEventListener('input', () => {
+                        updatePreview();
+                        debouncedAutosave();
+                    });
+                });
+                updatePreview();
+            }
+        } catch (error) {
+            console.error('Error adding education:', error);
+        }
+    }
+
+    function removeEducation(index) {
+        const el = document.getElementById(`education-item-${index}`);
+        if (el) {
+            el.remove();
+            updatePreview();
+            debouncedAutosave();
+        }
+    }
+
+    function removeSkillCategory(index) {
+        const el = document.getElementById(`skill-category-${index}`);
+        if (el) {
+            el.remove();
+            updatePreview();
+            debouncedAutosave();
+        }
+    }
+
+    function removeExperience(index) {
+        const el = document.getElementById(`experience-item-${index}`);
+        if (el) {
+            el.remove();
+            updatePreview();
+            debouncedAutosave();
+        }
+    }
+
+    async function saveProfileData() {
+        const data = collectFormData();
+        await saveProfile(data);
+        alert('Profile saved!');
+        window.location.href = '/';
+    }
+
+    document.addEventListener('DOMContentLoaded', initForm);
+</script>
+<style>
+    /* Custom scrollbar for better look in the app */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    #resume-preview .resume-container {
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        border-left: none; /* remove the blue border from style.css for preview */
+    }
+    #resume-preview .header-clean, 
+    #resume-preview .main-content {
+        border-left: none; /* remove the blue border from style.css for preview */
+    }
+</style>
+{% endblock %}

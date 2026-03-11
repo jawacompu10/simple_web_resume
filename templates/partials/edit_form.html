@@ -1,0 +1,162 @@
+<form id="edit-profile-form">
+    <section>
+        <h3 class="text-xl font-semibold mb-4 text-blue-800">Personal Info</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-group">
+                <label for="form-name" class="block text-sm font-medium text-gray-700">Name</label>
+                <input type="text" id="form-name" name="personalInfo[name]" value="{{ profile.personalInfo.name }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div class="form-group">
+                <label for="form-title" class="block text-sm font-medium text-gray-700">Title</label>
+                <input type="text" id="form-title" name="personalInfo[title]" value="{{ profile.personalInfo.title }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div class="form-group md:col-span-2">
+                <label for="form-branding" class="block text-sm font-medium text-gray-700">Branding</label>
+                <input type="text" id="form-branding" name="personalInfo[branding]" value="{{ profile.personalInfo.branding }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div class="form-group">
+                <label for="form-email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="form-email" name="personalInfo[email]" value="{{ profile.personalInfo.email }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div class="form-group">
+                <label for="form-phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                <input type="text" id="form-phone" name="personalInfo[phone]" value="{{ profile.personalInfo.phone }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div class="form-group">
+                <label for="form-linkedin" class="block text-sm font-medium text-gray-700">LinkedIn URL</label>
+                <input type="url" id="form-linkedin" name="personalInfo[linkedin]" value="{{ profile.personalInfo.linkedin }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div class="form-group">
+                <label for="form-github" class="block text-sm font-medium text-gray-700">GitHub URL</label>
+                <input type="url" id="form-github" name="personalInfo[github]" value="{{ profile.personalInfo.github }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div class="form-group">
+                <label for="form-website" class="block text-sm font-medium text-gray-700">Website URL (Optional)</label>
+                <input type="url" id="form-website" name="personalInfo[website]" value="{{ profile.personalInfo.website }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div class="form-group md:col-span-2">
+                <label for="form-currentLocation" class="block text-sm font-medium text-gray-700">Location</label>
+                <input type="text" id="form-currentLocation" name="personalInfo[currentLocation]" value="{{ profile.personalInfo.currentLocation }}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-8">
+        <h3 class="text-xl font-semibold mb-4 text-blue-800">Summary</h3>
+        <label for="form-summary" class="block text-sm font-medium text-gray-700 sr-only">Summary</label>
+        <textarea id="form-summary" name="summary" rows="4" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">{{ profile.summary }}</textarea>
+    </section>
+
+    <section class="mt-8">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-semibold text-blue-800">Key Achievements</h3>
+            <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Optional but Recommended</span>
+        </div>
+        <label for="form-keyAchievements" class="block text-sm font-medium text-gray-700 sr-only">Key Achievements</label>
+        <textarea id="form-keyAchievements" name="keyAchievements" rows="4" placeholder="One achievement per line..." class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">{{ profile.keyAchievements | join('\n') if profile.keyAchievements else '' }}</textarea>
+    </section>
+
+    <section class="mt-8">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-semibold text-blue-800">Project Highlights</h3>
+            <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Optional but Recommended</span>
+        </div>
+        <label for="form-projectHighlights" class="block text-sm font-medium text-gray-700 sr-only">Project Highlights</label>
+        <textarea id="form-projectHighlights" name="projectHighlights" rows="4" placeholder="One project highlight per line..." class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">{{ profile.projectHighlights | join('\n') if profile.projectHighlights else '' }}</textarea>
+    </section>
+
+    <section id="skills-section" class="mt-8">
+        <h3 class="text-xl font-semibold mb-4 text-blue-800">Skills</h3>
+        <div id="skill-categories-container">
+            {% if profile.skills %}
+                {% for category, items in profile.skills.items() %}
+                <div class="skill-category-form bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 relative" id="skill-category-{{ loop.index0 }}">
+                    <button type="button" class="absolute top-2 right-2 text-red-500 hover:text-red-700 remove-skill-btn" onclick="removeSkillCategory({{ loop.index0 }})">
+                        <i class="fa-solid fa-circle-xmark text-xl"></i>
+                    </button>
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-gray-700">Category Name</label>
+                            <input type="text" name="skills[{{ loop.index0 }}][name]" value="{{ category }}" placeholder="e.g. Frontend, Backend, Tools" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-gray-700">Skills (One per line)</label>
+                            <textarea name="skills[{{ loop.index0 }}][items]" placeholder="React&#10;Tailwind&#10;Alpine JS" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">{{ items | join('\n') }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <button type="button" onclick="addSkillCategory()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-blue-600 hover:border-blue-400 transition-colors">
+            <i class="fa-solid fa-plus mr-2"></i> Add Skill Category
+        </button>
+    </section>
+
+    <section id="experience-section" class="mt-8">
+        <h3 class="text-xl font-semibold mb-4 text-blue-800">Work Experience</h3>
+        <div id="experience-items-container">
+            {% for exp in profile.experience %}
+            <div class="experience-item-form bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 relative" id="experience-item-{{ loop.index0 }}">
+                <button type="button" class="absolute top-2 right-2 text-red-500 hover:text-red-700" onclick="removeExperience({{ loop.index0 }})">
+                    <i class="fa-solid fa-circle-xmark text-xl"></i>
+                </button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <input type="text" name="experience[{{ loop.index0 }}][title]" value="{{ exp.title }}" placeholder="Job Title" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="experience[{{ loop.index0 }}][company]" value="{{ exp.company }}" placeholder="Company" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div class="form-group md:col-span-2">
+                        <input type="text" name="experience[{{ loop.index0 }}][years]" value="{{ exp.years }}" placeholder="Years (e.g., 2020 - 2022)" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div class="form-group md:col-span-2">
+                        <textarea name="experience[{{ loop.index0 }}][description]" placeholder="Description (one point per line)" rows="3" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">{{ exp.description | join('\n') }}</textarea>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" onclick="addExperience()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-blue-600 hover:border-blue-400 transition-colors">
+            <i class="fa-solid fa-plus mr-2"></i> Add Experience
+        </button>
+    </section>
+
+    <section id="education-section" class="mt-8">
+        <h3 class="text-xl font-semibold mb-4 text-blue-800">Education</h3>
+        <div id="education-items-container">
+            {% for edu in profile.education %}
+            <div class="education-item-form bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 relative" id="education-item-{{ loop.index0 }}">
+                <button type="button" class="absolute top-2 right-2 text-red-500 hover:text-red-700 remove-edu-btn" onclick="removeEducation({{ loop.index0 }})">
+                    <i class="fa-solid fa-circle-xmark text-xl"></i>
+                </button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-gray-700">Degree</label>
+                        <input type="text" name="education[{{ loop.index0 }}][degree]" value="{{ edu.degree }}" placeholder="e.g. Master of Technology" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-gray-700">University</label>
+                        <input type="text" name="education[{{ loop.index0 }}][university]" value="{{ edu.university }}" placeholder="e.g. BITS, Pilani" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div class="form-group md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Years</label>
+                        <input type="text" name="education[{{ loop.index0 }}][years]" value="{{ edu.years }}" placeholder="e.g. 2010 - 2014" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" onclick="addEducation()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-blue-600 hover:border-blue-400 transition-colors">
+            <i class="fa-solid fa-plus mr-2"></i> Add Education
+        </button>
+    </section>
+
+    <div class="mt-10 pt-6 border-t flex justify-end space-x-4">
+        <a href="/" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">Cancel</a>
+        <button type="button" onclick="saveProfileData()" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-md">
+            Save Profile
+        </button>
+    </div>
+</form>

@@ -1,0 +1,15 @@
+<div class="skill-category-form bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 relative" id="skill-category-{{ index }}">
+    <button type="button" class="absolute top-2 right-2 text-red-500 hover:text-red-700 remove-skill-btn" onclick="removeSkillCategory({{ index }})">
+        <i class="fa-solid fa-circle-xmark text-xl"></i>
+    </button>
+    <div class="space-y-4">
+        <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700">Category Name</label>
+            <input type="text" name="skills[{{ index }}][name]" placeholder="e.g. Frontend, Backend, Tools" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        </div>
+        <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700">Skills (One per line)</label>
+            <textarea name="skills[{{ index }}][items]" placeholder="React&#10;Tailwind&#10;Alpine JS" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+        </div>
+    </div>
+</div>

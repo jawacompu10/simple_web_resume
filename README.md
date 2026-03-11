@@ -1,69 +1,91 @@
 # Simple Web Resume
 
-A clean, responsive, and data-driven resume template that populates content from a JSON file. This project is designed for easy customization and professional printing.
-
-<img width="928" height="1045" alt="image" src="https://github.com/user-attachments/assets/663fa540-3acf-4a01-b6fb-6e4af42a2dc6" />
-
+A modern, responsive, and data-driven resume builder that stores data locally in your browser. This project is designed for easy customization, multiple profile management, and professional printing.
 
 ## Features
-- **JSON Driven:** Update your resume content in one place (`resume.json`).
-- **Clean Design:** Professional typography and icons using Google Fonts and Font Awesome.
+- **JSON Driven:** Update your resume content easily via a form or direct JSON edit.
+- **Multiple Profiles:** Create and manage multiple resume profiles (e.g., SDE, QA, Manager) stored locally in IndexedDB.
+- **Autosave:** Your changes are automatically saved as you type.
+- **Live Preview:** See your changes in real-time as you edit your profile.
 - **Print Optimized:** Styled specifically for "Save to PDF" to ensure a high-quality physical or digital document.
-- **No Build Step:** Pure HTML, CSS, and Vanilla JavaScript.
+- **Local First:** Your data stays in your browser. No data is sent to any server.
 
-## Setup & Customization
+## Tech Stack
+- **Backend:** FastAPI (Python) - serves the application and partial templates.
+- **Frontend:** Plain HTML, Tailwind CSS, Alpine.js.
+- **Storage:** IndexedDB (via Dexie.js) - local storage in the browser.
+- **Testing:** Playwright & Pytest.
 
+## Setup & Running
+
+### Prerequisites
+- Python 3.13+
+- `uv` (recommended) or `pip`
+
+### Running Locally with `uv`
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/yourusername/simple-web-resume.git
    cd simple-web-resume
    ```
 
-2. **Edit your details:**
-   Open `resume.json` and replace the placeholder text with your own information. You can update:
-   - Personal details (Name, Title, Contact Info)
-   - Professional Summary
-   - Key Achievements & Project Highlights
-   - Work Experience & Education
-   - Skills (categorized by type)
-
-## How to Run Locally
-
-Since the project uses the JavaScript `fetch` API to load `resume.json`, it must be served through a local web server to avoid CORS (Cross-Origin Resource Sharing) issues when opening the file directly.
-
-### Using Python (3.x)
-Python comes with a built-in HTTP server:
-```bash
-python3 -m http.server 8000
-```
+2. **Run the application:**
+   ```bash
+   uv run python main.py
+   ```
 
 After running the command, open your browser and navigate to:
 `http://localhost:8000`
 
-### Using Node.js
-If you have Node.js installed, you can use `npx` to run a server without installing it:
-```bash
-npx serve
-```
-*Note: This usually runs on `http://localhost:3000` or `http://localhost:5000`.*
+### Running Locally with `pip`
+1. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
+2. **Run the application:**
+   ```bash
+   python main.py
+   ```
+
+## Testing
+The project uses Playwright for end-to-end testing.
+
+1. **Install test dependencies:**
+   ```bash
+   uv pip install pytest-playwright
+   playwright install
+   ```
+
+2. **Run tests:**
+   ```bash
+   uv run pytest
+   ```
 
 ## Printing to PDF
-
 This resume is optimized for printing directly from the browser:
-
-1. Open the resume in your browser (e.g., Chrome, Edge, or Firefox) via the local server.
-2. Press `Ctrl + P` (or `Cmd + P` on Mac).
-3. In the Print dialog:
-   - **Destination:** Select "Save as PDF" or "Microsoft Print to PDF".
-   - **Layout:** Portrait.
-   - **Margins:** Set to "Default" or "None" (recommended "Default").
-   - **Options:** Ensure "Background graphics" is checked if you want to preserve any background colors or icons.
-   - Remove "Headers and Footers" in Options
-4. Click **Save**.
+1. Click the **PDF** button on the dashboard or **Print / Save PDF** on the view page.
+2. In the Print dialog:
+   - **Destination:** Select "Save as PDF".
+   - **Margins:** Set to "Default".
+   - **Options:** Ensure "Background graphics" is checked.
+   - Remove "Headers and Footers".
 
 ## Project Structure
-- `index.html`: The main structure and layout.
-- `style.css`: All styling and print-specific media queries.
-- `script.js`: Logic to fetch data from JSON and inject it into the DOM.
-- `resume.json`: Your resume data.
+- `main.py`: FastAPI backend.
+- `static/`: CSS, JS, and initial `resume.json`.
+- `templates/`: Jinja2 templates for the dashboard, editor, and resume layout.
+- `tests/`: End-to-End test suite.
+
+## Acknowledgements
+This project is built upon the amazing work of the open-source community. Special thanks to:
+
+- [FastAPI](https://fastapi.tiangolo.com/) for the lightning-fast Python backend.
+- [Alpine.js](https://alpinejs.dev/) for providing lightweight reactivity with minimal overhead.
+- [Tailwind CSS](https://tailwindcss.com/) for making modern UI development a breeze.
+- [Dexie.js](https://dexie.org/) for the elegant wrapper around IndexedDB.
+- [HTMX](https://htmx.org/) for allowing high-power tools directly in HTML.
+- [Playwright](https://playwright.dev/) and [Pytest](https://docs.pytest.org/) for the robust testing ecosystem.
+- [Font Awesome](https://fontawesome.com/) for the beautiful icons.
+- [Google Fonts](https://fonts.google.com/) for the professional typography.
+- All our contributors and the broader open-source community!

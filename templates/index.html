@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume - Jawahar Vignesh</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512' fill='%231e40af'><path d='M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm152 32c13.3 0 32-10.7 32-24s-18.7-24-32-24H160c-13.3 0-32 10.7-32 24s18.7 24 32 24h56zm0 96c13.3 0 32-10.7 32-24s-18.7-24-32-24H160c-13.3 0-32 10.7-32 24s18.7 24 32 24h56z'/></svg>">
+    <!-- Google Fonts for typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="{{ url_for('static', path='vendor/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Floating action bar - Hidden during print -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b shadow-sm z-50 print:hidden px-4 py-2">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="/" class="text-blue-600 hover:text-blue-800 font-bold flex items-center">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Dashboard
+            </a>
+            <div class="flex gap-2">
+                <button onclick="downloadCurrentProfile()" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-1.5 rounded-lg text-sm font-bold flex items-center transition-colors shadow-md">
+                    <i class="fa-solid fa-download mr-2"></i> Download JSON
+                </button>
+                <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-sm font-bold flex items-center transition-colors shadow-md">
+                    <i class="fa-solid fa-print mr-2"></i> Print / Save PDF
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content padding for fixed nav -->
+    <div class="pt-16 print:pt-0">
+        {% include 'partials/resume_layout.html' %}
+    </div>
+    
+    <!-- Tailwind and Alpine for the nav bar styling -->
+    <script src="{{ url_for('static', path='vendor/js/tailwind.js') }}"></script>
+    <script src="{{ url_for('static', path='vendor/js/dexie.js') }}"></script>
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/resume_viewer.js"></script>
+    <script>
+        async function downloadCurrentProfile() {
+            const container = document.querySelector('.resume-container');
+            const profileId = container ? container.getAttribute('data-profile-id') : null;
+            if (profileId) {
+                const profile = await getProfile(profileId);
+                if (profile) {
+                    downloadProfileAsJson(profile);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

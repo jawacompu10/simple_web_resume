@@ -1,0 +1,19 @@
+<div class="experience-item-form bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 relative" id="experience-item-{{ index }}">
+    <button type="button" class="absolute top-2 right-2 text-red-500 hover:text-red-700 remove-exp-btn" onclick="removeExperience({{ index }})">
+        <i class="fa-solid fa-circle-xmark text-xl"></i>
+    </button>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="form-group">
+            <input type="text" name="experience[{{ index }}][title]" placeholder="Job Title" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        </div>
+        <div class="form-group">
+            <input type="text" name="experience[{{ index }}][company]" placeholder="Company" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        </div>
+        <div class="form-group md:col-span-2">
+            <input type="text" name="experience[{{ index }}][years]" placeholder="Years (e.g., 2020 - 2024)" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        </div>
+        <div class="form-group md:col-span-2">
+            <textarea name="experience[{{ index }}][description]" placeholder="Description (one bullet point per line)" rows="3" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+        </div>
+    </div>
+</div>
