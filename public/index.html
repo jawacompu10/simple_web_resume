@@ -77,9 +77,10 @@
                     <button @click="createNewProfile()" class="flex items-center justify-center bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md">
                         <i class="fa-solid fa-plus mr-2"></i> Create New Profile
                     </button>
-                    <button @click="importProfile()" class="flex items-center justify-center bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md">
+                    <button @click="$refs.fileInput.click()" class="flex items-center justify-center bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md">
                         <i class="fa-solid fa-file-import mr-2"></i> Import resume.json
                     </button>
+                    <input type="file" x-ref="fileInput" class="hidden" accept=".json" @change="importProfile($event)">
                 </div>
             </div>
 
@@ -145,13 +146,24 @@
                     const id = await saveProfile({ personalInfo: { name: "New Profile", title: "Software Engineer" }, summary: "", experience: [], education: [], skills: {} });
                     window.location.href = `edit.html?id=${id}`;
                 },
-                async importProfile() {
-                    try {
-                        const response = await fetch('static/resume.json');
-                        const data = await response.json();
-                        await saveProfile(data);
-                        await this.loadProfiles();
-                    } catch (error) { console.error('Error:', error); alert('Failed to import.'); }
+                async importProfile(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            await saveProfile(data);
+                            await this.loadProfiles();
+                            // Reset input
+                            event.target.value = '';
+                        } catch (error) {
+                            console.error('Error parsing JSON:', error);
+                            alert('Invalid resume.json file.');
+                        }
+                    };
+                    reader.readAsText(file);
                 },
                 async deleteProfileHandler(id) {
                     if (confirm('Are you sure?')) { await deleteProfile(id); await this.loadProfiles(); }

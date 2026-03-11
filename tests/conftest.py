@@ -36,3 +36,27 @@ def dismiss_storage_info(page, server):
     page.goto(server)
     page.evaluate("localStorage.setItem('hasSeenStorageInfo', 'true')")
     page.reload()
+
+@pytest.fixture
+def sample_resume_path(tmp_path):
+    resume_data = {
+        "personalInfo": {
+            "name": "Jawahar Vignesh",
+            "title": "Staff Software Development Engineer in Test",
+            "email": "test@example.com"
+        },
+        "summary": "PROFESSIONAL SUMMARY",
+        "experience": [],
+        "education": [],
+        "skills": {}
+    }
+    path = tmp_path / "resume.json"
+    import json
+    path.write_text(json.dumps(resume_data))
+    return str(path)
+
+@pytest.fixture
+def import_profile(page, sample_resume_path):
+    def _import():
+        page.set_input_files("input[type=file]", sample_resume_path)
+    return _import

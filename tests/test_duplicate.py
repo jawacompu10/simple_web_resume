@@ -1,11 +1,11 @@
 import pytest
 from playwright.sync_api import Page, expect
 
-def test_duplicate_profile(page: Page, server: str):
+def test_duplicate_profile(page: Page, server: str, import_profile):
     page.goto(server)
     
     # Import a profile first
-    page.get_by_text("Import resume.json").click()
+    import_profile()
     expect(page.get_by_text("Jawahar Vignesh")).to_be_visible()
     
     # Click Copy

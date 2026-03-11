@@ -1,21 +1,21 @@
 import pytest
 from playwright.sync_api import Page, expect
 
-def test_dashboard_download_buttons(page: Page, server: str):
+def test_dashboard_download_buttons(page: Page, server: str, import_profile):
     page.goto(server)
     
     # Import a profile first
-    page.get_by_text("Import resume.json").click()
+    import_profile()
     
     # Check if JSON and PDF buttons are present in the profile card
     expect(page.get_by_title("Download JSON")).to_be_visible()
     expect(page.get_by_title("Print to PDF")).to_be_visible()
 
-def test_view_page_download_buttons(page: Page, server: str):
+def test_view_page_download_buttons(page: Page, server: str, import_profile):
     page.goto(server)
     
     # Import a profile first
-    page.get_by_text("Import resume.json").click()
+    import_profile()
     
     # Click View
     page.get_by_title("View Resume").first.click()

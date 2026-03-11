@@ -2,9 +2,10 @@ import re
 from playwright.sync_api import Page, expect
 
 
-def test_edit_profile_saves(page: Page, server: str):
+def test_edit_profile_saves(page: Page, server: str, import_profile):
     page.goto(server)
-    page.get_by_text("Import resume.json").click()
+    # Use fixture to import file
+    import_profile()
     page.get_by_title("Edit Profile").first.click()
 
     # Wait for form to load
