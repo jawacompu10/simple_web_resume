@@ -24,9 +24,14 @@
     <div class="lg:w-1/2">
         <div class="sticky top-6">
             <div class="flex items-center justify-between mb-4 px-2">
-                <h3 class="text-lg font-semibold text-gray-700 uppercase tracking-wider">
-                    <i class="fa-solid fa-magnifying-glass mr-2 text-blue-500"></i> Live Preview
-                </h3>
+                <div class="flex items-center gap-3">
+                    <h3 class="text-lg font-semibold text-gray-700 uppercase tracking-wider">
+                        <i class="fa-solid fa-magnifying-glass mr-2 text-blue-500"></i> Live Preview
+                    </h3>
+                    <a :href="'/view/' + profileId" target="_blank" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-2 py-1 rounded border border-gray-300 transition-colors flex items-center" title="Open Full View in new tab">
+                        <i class="fa-solid fa-up-right-from-square mr-1"></i> Full View
+                    </a>
+                </div>
                 <div class="flex items-center gap-4">
                     <!-- Autosave Toggle -->
                     <label class="flex items-center cursor-pointer group" title="Toggle automatic saving">
