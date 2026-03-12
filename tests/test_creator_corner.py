@@ -12,7 +12,7 @@ def test_navbar_present(page: Page, server: str):
         "href", "https://www.linkedin.com/in/jawahar-vignesh-36418022/"
     )
     expect(page.get_by_title("GitHub Project")).to_have_attribute(
-        "href", "https://github.com/jawacompu10/simple-web-resume"
+        "href", "https://github.com/jawacompu10/simple_web_resume"
     )
 
 

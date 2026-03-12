@@ -35,8 +35,9 @@
                 
                 <div x-show="!loaded" class="text-gray-500 animate-pulse">Loading your data...</div>
                 
-                <div x-show="loaded" x-cloak>
-                    <form id="edit-profile-form">
+                <template x-if="loaded">
+                    <div x-cloak>
+                        <form id="edit-profile-form">
                         <!-- Personal Info -->
                         <section>
                             <h3 class="text-xl font-semibold mb-4 text-blue-800">Personal Info</h3>
@@ -215,7 +216,7 @@
                             </button>
                         </div>
                     </form>
-                </div>
+                </div></template>
             </div>
 
             <!-- Preview Side -->
