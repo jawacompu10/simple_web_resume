@@ -4,11 +4,15 @@ import time
 import requests
 import os
 
+
 @pytest.fixture(scope="session")
 def server():
     # Start a simple HTTP server in the public directory
-    process = subprocess.Popen(["python3", "-m", "http.server", "8000", "--directory", "public"], env=os.environ)
-    
+    process = subprocess.Popen(
+        ["python3", "-m", "http.server", "8000", "--directory", "public"],
+        env=os.environ,
+    )
+
     # Wait for the server to be ready
     url = "http://localhost:8000"
     timeout = 10
@@ -24,11 +28,12 @@ def server():
     else:
         process.terminate()
         pytest.fail("Server failed to start")
-        
+
     yield url
-    
+
     # Terminate the server
     process.terminate()
+
 
 @pytest.fixture(autouse=True)
 def dismiss_storage_info(page, server):
@@ -37,26 +42,30 @@ def dismiss_storage_info(page, server):
     page.evaluate("localStorage.setItem('hasSeenStorageInfo', 'true')")
     page.reload()
 
+
 @pytest.fixture
 def sample_resume_path(tmp_path):
     resume_data = {
         "personalInfo": {
             "name": "Jawahar Vignesh",
             "title": "Staff Software Development Engineer in Test",
-            "email": "test@example.com"
+            "email": "test@example.com",
         },
         "summary": "PROFESSIONAL SUMMARY",
         "experience": [],
         "education": [],
-        "skills": {}
+        "skills": {},
     }
     path = tmp_path / "resume.json"
     import json
+
     path.write_text(json.dumps(resume_data))
     return str(path)
+
 
 @pytest.fixture
 def import_profile(page, sample_resume_path):
     def _import():
         page.set_input_files("input[type=file]", sample_resume_path)
+
     return _import
