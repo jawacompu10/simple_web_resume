@@ -149,9 +149,17 @@
                             <div id="experience-items-container">
                                 <template x-for="(exp, index) in profile.experience" :key="index">
                                     <div class="experience-item-form bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 relative">
-                                        <button type="button" @click="removeExperience(index)" class="absolute top-2 right-2 text-red-500 hover:text-red-700 remove-exp-btn">
-                                            <i class="fa-solid fa-circle-xmark text-xl"></i>
-                                        </button>
+                                        <div class="absolute top-2 right-2 flex space-x-2">
+                                            <button type="button" @click="moveExperienceUp(index)" x-show="index > 0" class="text-blue-500 hover:text-blue-700 move-up-exp-btn" title="Move Up">
+                                                <i class="fa-solid fa-arrow-up text-lg"></i>
+                                            </button>
+                                            <button type="button" @click="moveExperienceDown(index)" x-show="index < profile.experience.length - 1" class="text-blue-500 hover:text-blue-700 move-down-exp-btn" title="Move Down">
+                                                <i class="fa-solid fa-arrow-down text-lg"></i>
+                                            </button>
+                                            <button type="button" @click="removeExperience(index)" class="text-red-500 hover:text-red-700 remove-exp-btn" title="Remove">
+                                                <i class="fa-solid fa-circle-xmark text-lg"></i>
+                                            </button>
+                                        </div>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div class="form-group">
                                                 <input type="text" :name="'experience[' + index + '][title]'" x-model="exp.title" placeholder="Job Title" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
@@ -358,6 +366,18 @@
                 },
                 addExperience() { this.profile.experience.push({ title: '', company: '', years: '', description: [] }); },
                 removeExperience(index) { this.profile.experience.splice(index, 1); },
+                moveExperienceUp(index) {
+                    if (index > 0) {
+                        const item = this.profile.experience.splice(index, 1)[0];
+                        this.profile.experience.splice(index - 1, 0, item);
+                    }
+                },
+                moveExperienceDown(index) {
+                    if (index < this.profile.experience.length - 1) {
+                        const item = this.profile.experience.splice(index, 1)[0];
+                        this.profile.experience.splice(index + 1, 0, item);
+                    }
+                },
                 addEducation() { this.profile.education.push({ degree: '', university: '', years: '' }); },
                 removeEducation(index) { this.profile.education.splice(index, 1); },
                 addSkillCategory() { this.skillCategories.push({ name: '', items: '' }); },
