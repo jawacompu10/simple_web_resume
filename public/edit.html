@@ -350,8 +350,8 @@
                     this.lastSavedHash = JSON.stringify(this.profile);
                     this.loaded = true;
                     this.updatePreview();
-                    this.$watch('profile', () => { this.updatePreview(); if (this.isAutosaveEnabled) this.triggerAutoSave(); });
-                    this.$watch('skillCategories', () => { this.syncSkills(); this.updatePreview(); if (this.isAutosaveEnabled) this.triggerAutoSave(); });
+                    this.$watch('profile', () => { this.debouncedUpdatePreview(); if (this.isAutosaveEnabled) this.triggerAutoSave(); });
+                    this.$watch('skillCategories', () => { this.syncSkills(); this.debouncedUpdatePreview(); if (this.isAutosaveEnabled) this.triggerAutoSave(); });
                     this.$watch('isAutosaveEnabled', (val) => { localStorage.setItem('autosaveEnabled', val); });
                 },
                 syncSkills() {
@@ -364,6 +364,9 @@
                     const currentHash = JSON.stringify(this.profile);
                     if (currentHash !== this.lastSavedHash) this.debouncedSave();
                 },
+                debouncedUpdatePreview: debounce(function() {
+                    this.updatePreview();
+                }, 400),
                 addExperience() { this.profile.experience.push({ title: '', company: '', years: '', description: [] }); },
                 removeExperience(index) { this.profile.experience.splice(index, 1); },
                 moveExperienceUp(index) {
